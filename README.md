@@ -67,22 +67,5 @@ So instead of managing 4 apps separately, I manage "Study."
 - **Storage:** Activity/group mappings and history
 - **Interface:** Activity-grouped task manager / dashboard
 
-Didn't want the build to be more complicated than the idea.
-
 ---
 
-## Deliberate simplification
-
-No auto-detecting what I'm doing. If I make a `Study` group, I manually add processes to it. Figuring out activity detection automatically is a whole different rabbit hole — not the point right now.
-
-Just testing: **is grouping itself useful?**
-
----
-
-## Not trying to prove anything
-
-Not claiming processes are a bad abstraction, or that OSes need rethinking, or that this makes anything faster. Processes are fine — I'm just curious if they're the best way for *me* to look at what my computer is doing.
-
-## If it goes somewhere
-
-Maybe activity-aware resource management, scheduling, monitoring... or maybe not. It's an experiment, not a roadmap.
