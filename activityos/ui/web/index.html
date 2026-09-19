@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ActivityOS — Core MVP (Review 2)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-title">
+        <span>ACTIVITY<span style="color: var(--accent-proposed);">OS</span></span>
+        <span class="version-chip">Review 2 · 60% Core MVP</span>
+      </div>
+      <div class="brand-subtitle">Manage your work as activities, not isolated processes.</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" onclick="refreshData()" title="Refresh now">↻ Refresh</button>
+      <button class="btn btn-primary" onclick="openCreateModal()">+ Create Activity</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+
+    <!-- System Overview Ribbon -->
+    <div class="system-ribbon">
+      <div class="metric-item">
+        <div class="metric-label">System CPU</div>
+        <div class="metric-value" id="sysCpuVal">0.0%</div>
+        <div class="metric-sub" id="sysCpuSub">Real-time load</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">System Memory</div>
+        <div class="metric-value" id="sysMemVal">0.0%</div>
+        <div class="metric-sub" id="sysMemSub">0 / 0 MB</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Tracked Activities</div>
+        <div class="metric-value" id="actCountVal">0</div>
+        <div class="metric-sub" id="actActiveSub">0 active sessions</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Managed Processes</div>
+        <div class="metric-value" id="procCountVal">0</div>
+        <div class="metric-sub">PIDs in active activities</div>
+      </div>
+    </div>
+
+    <!-- Layout Grid: Activities List & Drill Down Panel -->
+    <div class="layout-grid">
+
+      <!-- Left Panel: My Activities -->
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span>MY ACTIVITIES</span>
+          </div>
+          <span class="metric-sub" id="activitiesTotalLabel">0 activities</span>
+        </div>
+        <div class="panel-body" id="activitiesList">
+          <div class="empty-state">
+            <div class="empty-state-icon">📂</div>
+            <p><strong>No activities created yet.</strong></p>
+            <p style="font-size: 11.5px; margin-top: 4px;">Click <strong>+ Create Activity</strong> to group running processes or configure applications into an activity.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Activity Drill Down & Event Log -->
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span id="drilldownTitle">ACTIVITY DRILL-DOWN</span>
+          </div>
+          <span class="status-badge STOPPED" id="drilldownBadge" style="display:none;">STOPPED</span>
+        </div>
+        <div class="panel-body" id="drilldownContent">
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <p><strong>Select an activity on the left</strong> to inspect its contributing processes and timeline events.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- Create Activity Modal -->
+  <div class="modal-overlay" id="createModal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Create New Activity</div>
+        <button class="btn btn-outline btn-sm" onclick="closeCreateModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="info-banner">
+          Define what you are doing (e.g. <em>Study</em>, <em>Coding</em>, <em>Research</em>) and associate real Linux processes with it.
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Activity Name</label>
+          <input type="text" id="newActName" class="form-input" placeholder="e.g. Study, Coding, Research, Gaming" autofocus>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Associate Running Linux Processes</label>
+          <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+            <input type="text" id="procFilter" class="form-input" placeholder="Filter processes by name or PID..." oninput="renderProcessSelectionTable()" style="flex: 1;">
+            <button class="btn btn-outline btn-sm" onclick="fetchRunningProcesses()">↻ Scan Processes</button>
+          </div>
+
+          <div class="process-select-table">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th class="checkbox-col"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"></th>
+                  <th>PID</th>
+                  <th>Process Name</th>
+                  <th>Memory (RSS)</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+              <tbody id="processSelectTbody">
+                <tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 14px;">Scanning system processes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">
+            Selected PIDs: <span class="mono" id="selectedPidsSummary">None</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Optional: Configured Launch Application</label>
+          <input type="text" id="newActAppCommand" class="form-input mono" placeholder="e.g. code, google-chrome, python demo_workload.py">
+          <span style="font-size: 10.5px; color: var(--text-dim);">When you click "Start Activity", ActivityOS will automatically spawn this command and resolve its Linux PIDs.</span>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeCreateModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitCreateActivity()">Create Activity</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

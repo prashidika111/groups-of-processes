@@ -1,0 +1,4 @@
+# ActivityOS Linux Dependencies
+# Core Linux OS layer runs on standard Python 3.8+ library (os, signal, subprocess, json, time).
+# Desktop window host:
+pywebview>=4.0.0
