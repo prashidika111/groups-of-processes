@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ActivityOS — Proposed Methodology</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EAE7DD;
+  --paper-line:#C7C1AF;
+  --ink:#23231F;
+  --ink-dim:#5F5C50;
+  --proposed:#4B6B5E;
+  --proposed-bg:rgba(75,107,94,0.10);
+  --existing:#8C8577;
+  --existing-bg:rgba(140,133,119,0.10);
+}
+*{box-sizing:border-box;}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans', Arial, sans-serif;
+}
+.serif{font-family:'Source Serif 4', Georgia, serif;}
+.mono, code{font-family:'IBM Plex Mono','Courier New', monospace;}
+
+/* ---------- MASTHEAD ---------- */
+.masthead{border-bottom:2px solid var(--ink);padding:38px 26px 22px 26px;}
+.masthead-inner{max-width:1080px;margin:0 auto;}
+.doc-kicker{font-family:'IBM Plex Mono', monospace;font-size:0.78rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);}
+.doc-title{font-family:'Source Serif 4', Georgia, serif;font-weight:600;font-size:2.3rem;margin:6px 0 2px 0;letter-spacing:-0.01em;}
+.doc-subtitle{font-family:'Source Serif 4', Georgia, serif;font-style:italic;color:var(--ink-dim);font-size:1.05rem;margin-bottom:16px;}
+.top-nav{display:flex;gap:24px;}
+.top-nav a{font-size:0.86rem;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--proposed);padding-bottom:2px;}
+.top-nav a:hover{color:var(--proposed);}
+
+.wrap{max-width:1080px;margin:0 auto;padding:44px 26px 70px 26px;}
+
+/* ---------- FORMAL METHODOLOGY TYPESET ---------- */
+#formal h2{
+  font-family:'Source Serif 4', Georgia, serif;font-weight:600;
+  font-size:1.32rem;margin:44px 0 12px 0;padding-bottom:8px;
+  border-bottom:1px solid var(--paper-line);
+  page-break-after:avoid;break-after:avoid;
+}
+#formal h2:first-child{margin-top:0;}
+#formal p{font-size:0.97rem;line-height:1.68;margin:0 0 13px 0;orphans:3;widows:3;}
+#formal ul, #formal ol{font-size:0.97rem;line-height:1.68;padding-left:22px;margin:0 0 16px 0;}
+#formal li{margin-bottom:9px;}
+#formal li > strong{font-family:'Source Serif 4', Georgia, serif;}
+#formal code{background:rgba(0,0,0,0.055);padding:1px 5px;border-radius:2px;font-size:0.86rem;}
+#formal table{border-collapse:collapse;width:100%;margin:6px 0 20px 0;font-size:0.9rem;page-break-inside:avoid;break-inside:avoid;}
+#formal table th{
+  text-align:left;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.04em;
+  text-transform:uppercase;color:var(--ink-dim);font-weight:500;
+  border-bottom:1.5px solid var(--ink);padding:7px 12px 7px 0;
+}
+#formal table td{border-bottom:1px solid var(--paper-line);padding:9px 12px 9px 0;vertical-align:top;line-height:1.5;}
+#formal table tr.unused-row td{color:var(--ink-dim);}
+.kind-chip{display:inline-block;font-size:0.68rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.03em;padding:1px 7px;border-radius:2px;white-space:nowrap;}
+.kind-chip.proposed{background:var(--proposed-bg);color:var(--proposed);}
+.kind-chip.existing{background:var(--existing-bg);color:var(--existing);}
+.kind-chip.unused{background:none;border:1px solid var(--existing);color:var(--existing);font-weight:600;}
+.note-box{
+  background:var(--proposed-bg);border-left:3px solid var(--proposed);
+  padding:13px 16px;font-size:0.88rem;line-height:1.6;color:var(--ink);
+  margin:0 0 26px 0;font-style:italic;font-family:'Source Serif 4', Georgia, serif;
+}
+
+/* ---------- SCREEN-ONLY LEGEND (explorer) ---------- */
+header.explorer-head{margin-bottom:30px;max-width:640px;}
+header.explorer-head h2{font-family:'Source Serif 4', Georgia, serif;font-weight:600;font-size:1.6rem;margin:0 0 10px 0;}
+.sub{color:var(--ink-dim);font-size:0.97rem;line-height:1.6;}
+.legend{display:flex;gap:26px;margin-top:16px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:0.82rem;color:var(--ink-dim);}
+.tick{width:3px;height:13px;flex-shrink:0;}
+
+nav.tabs{
+  display:flex;gap:30px;
+  border-bottom:1px solid var(--paper-line);
+  padding-bottom:12px;margin-bottom:22px;
+}
+nav.tabs button{
+  background:none;border:none;padding:0;
+  font-family:'Source Serif 4', Georgia, serif;font-size:1.02rem;
+  color:var(--ink-dim);cursor:pointer;
+  border-bottom:2px solid transparent;padding-bottom:4px;
+}
+nav.tabs button.active{color:var(--ink);border-bottom-color:var(--proposed);}
+nav.tabs button:hover{color:var(--ink);}
+
+.op-list{margin-bottom:16px;display:none;}
+.op-list.show{display:block;}
+.op-list span{
+  font-size:0.86rem;color:var(--ink-dim);cursor:pointer;
+  margin-right:22px;padding-bottom:2px;
+}
+.op-list span.active{color:var(--ink);font-weight:600;border-bottom:1px solid var(--proposed);}
+.op-list span:hover{color:var(--ink);}
+
+.stage{
+  display:grid;
+  grid-template-columns:1.35fr 1fr;
+  border:1px solid var(--paper-line);
+}
+@media(max-width:760px){.stage{grid-template-columns:1fr;}}
+
+.diagram-pane{padding:22px 20px;border-right:1px solid var(--paper-line);min-height:520px;}
+@media(max-width:760px){.diagram-pane{border-right:none;border-bottom:1px solid var(--paper-line);}}
+.annotation-pane{padding:26px 28px;min-height:520px;}
+
+.pane-caption{font-size:0.76rem;color:var(--ink-dim);margin-bottom:14px;font-style:italic;font-family:'Source Serif 4', Georgia, serif;}
+
+svg text{font-family:'IBM Plex Sans', Arial, sans-serif;}
+.arch-svg{width:100%;height:auto;display:block;}
+#fig1 .arch-svg{max-width:73%;margin:0 auto;}
+.fig-field-text{font-family:'IBM Plex Mono',monospace;font-size:10.5px;fill:var(--ink);}
+.fig-cat-text{font-family:'Source Serif 4', Georgia, serif;font-style:italic;font-size:11.5px;fill:var(--ink-dim);}
+.fig-eg-text{font-family:'Source Serif 4', Georgia, serif;font-style:italic;font-size:11px;fill:var(--ink-dim);}
+.node-hit{fill:transparent;cursor:pointer;}
+.node-tick{stroke-width:3;}
+.node-tick.proposed{stroke:var(--proposed);}
+.node-tick.existing{stroke:var(--existing);}
+.node-label{fill:var(--ink);font-size:13.5px;font-weight:500;}
+.node-label.selected{fill:var(--proposed);}
+.node-sub{fill:var(--ink-dim);font-size:9.5px;font-style:italic;}
+.arch-line{stroke:var(--ink);stroke-width:1;fill:none;}
+.arch-line-dim{stroke:var(--ink-dim);stroke-width:1;fill:none;stroke-dasharray:2,3;}
+.deadend-label{fill:var(--ink-dim);font-size:9px;font-style:italic;}
+.arch-joint{fill:var(--ink-dim);}
+.arch-zone{fill:none;stroke:var(--existing);stroke-width:1;stroke-dasharray:3,3;}
+.zone-label{fill:var(--existing);font-size:9.5px;font-style:italic;font-family:'Source Serif 4', Georgia, serif;}
+
+.field-list, .cap-list{list-style:none;margin:0;padding:0;}
+.field-list li, .cap-list li{
+  padding:11px 2px;border-bottom:1px solid var(--paper-line);
+  cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;
+  gap:10px;
+}
+.field-list li:hover, .cap-list li:hover{background:rgba(0,0,0,0.02);}
+.field-list li.selected, .cap-list li.selected{border-bottom-color:var(--proposed);}
+.f-name{font-family:'Source Serif 4', Georgia, serif;font-size:0.98rem;}
+.f-name.selected{color:var(--proposed);}
+.f-sub{font-size:0.76rem;color:var(--ink-dim);text-align:right;flex-shrink:0;}
+
+.step-timeline{position:relative;padding-left:26px;}
+.step-rule{position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--paper-line);}
+.step-item{position:relative;padding:10px 0;cursor:pointer;}
+.step-dot{position:absolute;left:-26px;top:14px;width:9px;height:9px;border-radius:50%;background:var(--paper);border:1.5px solid var(--existing);}
+.step-item.proposed .step-dot{border-color:var(--proposed);}
+.step-item.selected .step-dot{background:var(--proposed);border-color:var(--proposed);}
+.step-name{font-family:'Source Serif 4', Georgia, serif;font-size:0.98rem;}
+.step-item.selected .step-name{color:var(--proposed);}
+
+.a-title{font-family:'Source Serif 4', Georgia, serif;font-size:1.25rem;font-weight:600;margin:0 0 2px 0;}
+.a-kind{font-size:0.78rem;color:var(--ink-dim);margin-bottom:16px;}
+.a-body p{margin:0 0 13px 0;font-size:0.92rem;line-height:1.62;color:var(--ink);}
+.a-body em{color:var(--ink-dim);font-style:italic;font-family:'Source Serif 4', Georgia, serif;}
+.a-body code{font-family:'IBM Plex Mono', monospace;font-size:0.84rem;background:rgba(0,0,0,0.05);padding:1px 5px;border-radius:2px;}
+.a-status{display:inline-block;font-size:0.76rem;padding:3px 9px;border:1px solid var(--paper-line);color:var(--ink-dim);margin-top:4px;}
+.a-status.unused{border-color:var(--existing);color:var(--existing);}
+.placeholder{color:var(--ink-dim);font-size:0.9rem;font-style:italic;font-family:'Source Serif 4', Georgia, serif;}
+
+/* ---------- PRINT FIGURES (hidden on screen) ---------- */
+.figure-block{display:none;}
+.fig-caption{
+  font-family:'Source Serif 4', Georgia, serif;font-style:italic;font-size:0.82rem;
+  color:var(--ink-dim);margin-top:8px;text-align:center;
+}
+.fig-frame{border:1px solid var(--paper-line);padding:18px 16px;background:rgba(255,255,255,0.35);}
+.flow-figure{display:flex;flex-direction:column;gap:0;}
+.flow-step{display:flex;gap:12px;padding:8px 0;border-left:2px solid var(--existing);margin-left:5px;padding-left:16px;position:relative;}
+.flow-step.proposed{border-left-color:var(--proposed);}
+.flow-step .fs-dot{position:absolute;left:-6px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--existing);}
+.flow-step.proposed .fs-dot{background:var(--proposed);}
+.flow-step .fs-num{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-dim);width:18px;flex-shrink:0;}
+.flow-step .fs-body{flex:1;}
+.flow-step .fs-title{font-family:'Source Serif 4', Georgia, serif;font-size:0.95rem;font-weight:600;}
+.flow-step .fs-desc{font-size:0.84rem;color:var(--ink-dim);line-height:1.5;margin-top:2px;}
+.fig-legend{display:flex;gap:22px;font-size:0.76rem;color:var(--ink-dim);margin-bottom:14px;}
+.fig-legend .tick{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;}
+
+/* ---------- PRINT MEDIA ---------- */
+@media print{
+  body, .wrap, .masthead, .fig-frame{background:#fff !important;}
+  .screen-only{display:none !important;}
+  .figure-block{display:block !important;page-break-inside:avoid;break-inside:avoid;margin:22px 0 30px 0;}
+  #formal h2{page-break-before:auto;}
+  #formal h2.force-break{page-break-before:always;}
+  .masthead{padding:0 0 16px 0;border-bottom:2px solid #000;margin-bottom:18px;}
+  .wrap{padding:0;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+  @page{margin:1.8cm 1.6cm;}
+}
+@media screen{
+  .print-only-note{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="doc-kicker">ActivityOS — Review 2</div>
+    <h1 class="doc-title">Proposed Methodology</h1>
+    <div class="doc-subtitle">Architecture / Design</div>
+    <nav class="top-nav screen-only">
+      <a href="#formal">Formal Methodology</a>
+      <a href="#explorer">Interactive Explorer</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- ============================================================ -->
+<!-- FORMAL METHODOLOGY                                            -->
+<!-- ============================================================ -->
+<section id="formal">
+
+<h2>5.x.1 Approach</h2>
+<p>The Proposed Methodology describes <em>how</em> ActivityOS is intended to be constructed and operated — it is a design specification, not a claim that the system is already implemented. The coding review that follows will demonstrate the actual, working prototype; this section demonstrates the engineering reasoning that the prototype is built from.</p>
+<p>The architecture reuses the component chain established in Review 1 (Figure 2): <strong>Process Grouper → Activity Manager → Resource Monitor / Activity Control Engine → OS System Calls → Operating System</strong>, with the <strong>Timeline Logger</strong> and <strong>Dashboard</strong> as reporting surfaces. No new component is introduced here; this section makes that chain concrete by tracing it against specific operations, specific data, and specific Linux mechanisms.</p>
+
+<h2>5.x.2 Layered Construction</h2>
+<p>The architecture is read top-to-bottom as the conceptual flow from user intent through the proposed activity layer to existing operating-system mechanisms. The Process Grouper establishes the activity–process relationship, after which the Activity Manager maintains that mapping for subsequent monitoring and control. The Resource Monitor and Activity Control Engine operate on this maintained membership rather than independently rediscovering it. Every proposed component sits above a fixed boundary: below that boundary, only unmodified Linux mechanisms are used — process listing, POSIX signals (<code>SIGSTOP</code>/<code>SIGCONT</code>), and priority adjustment (<code>setpriority()</code>/<code>nice</code>). Nothing below the boundary is altered by this project; ActivityOS's contribution is entirely the decision and representation layer above it. The full arrangement is shown in Figure 1.</p>
+
+<div class="figure-block" id="fig1">
+  <div class="fig-frame">
+    <div class="fig-legend">
+      <span><span class="tick" style="background:var(--proposed);border-radius:0;"></span>proposed / new</span>
+      <span><span class="tick" style="background:var(--existing);border-radius:0;"></span>existing OS — unmodified</span>
+    </div>
+    <svg class="arch-svg" viewBox="0 0 760 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="archArrowP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L8,4 L0,8 Z" fill="var(--ink-dim)"/>
+        </marker>
+      </defs>
+      <line class="arch-line" x1="340" y1="34" x2="340" y2="62" marker-end="url(#archArrowP)"/>
+      <line class="arch-line" x1="340" y1="90" x2="340" y2="122" marker-end="url(#archArrowP)"/>
+      <line class="arch-line" x1="340" y1="150" x2="340" y2="168"/>
+      <line class="arch-line" x1="112" y1="168" x2="650" y2="168"/>
+      <line class="arch-line" x1="112" y1="168" x2="112" y2="202" marker-end="url(#archArrowP)"/>
+      <line class="arch-line" x1="340" y1="168" x2="340" y2="202" marker-end="url(#archArrowP)"/>
+      <line class="arch-line" x1="650" y1="168" x2="650" y2="202" marker-end="url(#archArrowP)"/>
+      <circle class="arch-joint" cx="340" cy="168" r="2.5"/>
+      <circle class="arch-joint" cx="112" cy="168" r="2.5"/>
+      <circle class="arch-joint" cx="650" cy="168" r="2.5"/>
+      <line class="arch-line" x1="340" y1="230" x2="340" y2="258" marker-end="url(#archArrowP)"/>
+      <line class="arch-line" x1="340" y1="290" x2="340" y2="318" marker-end="url(#archArrowP)"/>
+      <rect class="arch-zone" x="248" y="244" width="184" height="106"/>
+      <text x="256" y="257" class="zone-label">below the boundary — unmodified Linux</text>
+      <text x="248" y="366" class="deadend-label">no return path — the kernel never reports back</text>
+      <path class="arch-line" d="M112,230 V460 H333" marker-end="url(#archArrowP)"/>
+      <path class="arch-line" d="M650,230 V460 H347" marker-end="url(#archArrowP)"/>
+      <g><rect class="node-hit" x="300" y="6" width="160" height="28"/><line class="node-tick proposed" x1="340" y1="8" x2="340" y2="26"/><text x="352" y="24" class="node-label">User</text></g>
+      <g><rect class="node-hit" x="300" y="62" width="230" height="30"/><line class="node-tick proposed" x1="340" y1="64" x2="340" y2="90"/><text x="352" y="80" class="node-label">Process Grouper</text><text x="352" y="92" class="node-sub">maps processes → activity</text></g>
+      <g><rect class="node-hit" x="300" y="122" width="260" height="30"/><line class="node-tick proposed" x1="340" y1="123" x2="340" y2="151" stroke-width="4"/><text x="352" y="140" class="node-label">Activity Manager</text><text x="352" y="152" class="node-sub">owns activity_id, membership, lifecycle</text></g>
+      <g><rect class="node-hit" x="100" y="202" width="150" height="30"/><line class="node-tick proposed" x1="112" y1="204" x2="112" y2="230"/><text x="124" y="218" class="node-label">Resource Monitor</text><text x="124" y="230" class="node-sub">aggregates CPU / memory</text></g>
+      <g><rect class="node-hit" x="270" y="202" width="230" height="30"/><line class="node-tick proposed" x1="340" y1="204" x2="340" y2="230"/><text x="352" y="218" class="node-label">Activity Control Engine</text><text x="352" y="230" class="node-sub">pause / resume / priority</text></g>
+      <g><rect class="node-hit" x="510" y="202" width="150" height="30"/><line class="node-tick proposed" x1="650" y1="204" x2="650" y2="230"/><text x="638" y="218" text-anchor="end" class="node-label">Timeline Logger</text><text x="638" y="230" text-anchor="end" class="node-sub">records Control Engine actions only</text></g>
+      <g><rect class="node-hit" x="270" y="258" width="160" height="30"/><line class="node-tick existing" x1="340" y1="260" x2="340" y2="286"/><text x="352" y="274" class="node-label">OS System Calls</text><text x="352" y="286" class="node-sub">setpriority(), kill(), /proc</text></g>
+      <g><rect class="node-hit" x="270" y="318" width="160" height="30"/><line class="node-tick existing" x1="340" y1="320" x2="340" y2="346"/><text x="352" y="334" class="node-label">Operating System</text><text x="352" y="346" class="node-sub">kernel scheduler — untouched</text></g>
+      <g><rect class="node-hit" x="270" y="446" width="220" height="30"/><line class="node-tick proposed" x1="340" y1="448" x2="340" y2="474" stroke-width="4"/><text x="352" y="462" class="node-label">Dashboard</text><text x="352" y="474" class="node-sub">reads Monitor + Timeline — never the kernel</text></g>
+    </svg>
+  </div>
+  <div class="fig-caption">Figure 1. Proposed Activity-Centric Architecture</div>
+</div>
+
+<h2>5.x.3 Operation Workflows</h2>
+<p>Four representative operations are traced individually, each through the same five stages — <strong>user input → component → processing → underlying mechanism → result</strong> — so that no operation is described as an unsupported black box:</p>
+<ul>
+  <li><strong>Create Activity + Associate Processes</strong> — the one workflow with manual input at the membership level. This is a deliberate scope decision (Review 1, §7.1): automatic activity detection is a separate research problem, out of scope for this prototype. The Process Grouper validates user-selected PIDs against the OS process table and the Activity Manager creates the Activity record.</li>
+  <li><strong>Monitor Activity Resources</strong> — the Resource Monitor samples process CPU accounting information from <code>/proc/&lt;pid&gt;/stat</code> over an observation interval and computes per-process CPU utilisation from it; memory usage is obtained directly from <code>/proc/&lt;pid&gt;/status</code>. Both are aggregated across the activity's member processes and exposed as one CPU/memory value on the Dashboard.</li>
+  <li><strong>Pause / Resume Activity</strong> — the strongest representative operation, and the one selected for the full end-to-end trace below (§5.x.4, Figure 2).</li>
+  <li><strong>Change Activity Priority</strong> — structurally identical to pause/resume: membership is resolved, the operation is translated per-process, <code>setpriority()</code> is called once per member PID. This translation — one activity-level command fanning out into per-process OS operations — is the central implementation mechanism through which the proposed activity abstraction is connected to existing process-level controls; it is not presented as a novel scheduling technique.</li>
+</ul>
+
+<h2>5.x.4 End-to-End Trace — "Pause Study"</h2>
+<p>This is the single trace chosen to demonstrate that the architecture is coherent from human intent to kernel-level effect, with no unexplained step (Figure 2):</p>
+<ol>
+  <li><strong>Human intent</strong> — user clicks Pause on the "Study" activity.</li>
+  <li><strong>Activity layer</strong> — Activity Manager looks up the Activity record by <code>activity_id</code>.</li>
+  <li><strong>Membership resolution</strong> — the stored <code>member_processes[]</code> mapping is the source of membership for this operation; the Control Engine may validate that each stored PID is still available before issuing the corresponding OS operation, since member processes can exit between grouping and control operations.</li>
+  <li><strong>Control component</strong> — the resolved PID set is handed to the Activity Control Engine.</li>
+  <li><strong>Translation</strong> — the single activity-level "pause" request is translated into one process-level operation per member PID.</li>
+  <li><strong>Linux mechanism</strong> — the Control Engine attempts <code>kill(pid, SIGSTOP)</code> for each member PID and records the outcome per process; failures (permission denied, PID no longer present) are recorded rather than silently treated as success.</li>
+  <li><strong>Kernel effect</strong> — for each process the signal reaches, the kernel scheduler stops scheduling it, using standard, unmodified signal handling. The kernel itself has no concept of "Study" — it only ever sees ordinary <code>SIGSTOP</code> signals.</li>
+  <li><strong>Side effect</strong> — the Timeline Logger records <code>{activity: "Study", action: "pause", timestamp}</code> into the activity's <code>event_log[]</code>. This is logged because the Control Engine made a decision, not because the kernel reported anything — the kernel is never queried for activity information.</li>
+  <li><strong>Result</strong> — the activity is marked paused according to the prototype's defined success policy (e.g. all-members-succeeded, or best-effort with failures recorded); the Dashboard reflects this application-level state. Resume follows the identical path with <code>SIGCONT</code>.</li>
+</ol>
+
+<div class="figure-block" id="fig2">
+  <div class="fig-frame">
+    <div class="fig-legend">
+      <span><span class="tick" style="background:var(--proposed);"></span>proposed / new</span>
+      <span><span class="tick" style="background:var(--existing);"></span>existing OS — unmodified</span>
+    </div>
+    <div class="flow-figure">
+      <div class="flow-step proposed"><div class="fs-dot"></div><span class="fs-num">1</span><div class="fs-body"><div class="fs-title">Human Intent</div><div class="fs-desc">User clicks Pause on the "Study" activity.</div></div></div>
+      <div class="flow-step proposed"><div class="fs-dot"></div><span class="fs-num">2</span><div class="fs-body"><div class="fs-title">Activity Layer</div><div class="fs-desc">Activity Manager looks up the Activity record by activity_id.</div></div></div>
+      <div class="flow-step proposed"><div class="fs-dot"></div><span class="fs-num">3</span><div class="fs-body"><div class="fs-title">Membership Resolution</div><div class="fs-desc">member_processes[] is read; PIDs validated as still available.</div></div></div>
+      <div class="flow-step proposed"><div class="fs-dot"></div><span class="fs-num">4</span><div class="fs-body"><div class="fs-title">Control Component</div><div class="fs-desc">Resolved PID set handed to the Activity Control Engine.</div></div></div>
+      <div class="flow-step proposed"><div class="fs-dot"></div><span class="fs-num">5</span><div class="fs-body"><div class="fs-title">Translation</div><div class="fs-desc">One activity-level "pause" becomes one operation per member PID.</div></div></div>
+      <div class="flow-step"><div class="fs-dot"></div><span class="fs-num">6</span><div class="fs-body"><div class="fs-title">Linux Mechanism</div><div class="fs-desc">kill(pid, SIGSTOP) attempted per PID; outcome recorded per process.</div></div></div>
+      <div class="flow-step"><div class="fs-dot"></div><span class="fs-num">7</span><div class="fs-body"><div class="fs-title">Kernel Effect</div><div class="fs-desc">Kernel stops scheduling each successfully-signaled process; the kernel has no concept of "Study".</div></div></div>
+      <div class="flow-step proposed"><div class="fs-dot"></div><span class="fs-num">8</span><div class="fs-body"><div class="fs-title">Side Effect</div><div class="fs-desc">Timeline Logger appends {activity, action, timestamp} to event_log[].</div></div></div>
+      <div class="flow-step proposed"><div class="fs-dot"></div><span class="fs-num">9</span><div class="fs-body"><div class="fs-title">Result</div><div class="fs-desc">Activity marked paused per defined success policy; Dashboard reflects state. Resume follows the identical path with SIGCONT.</div></div></div>
+    </div>
+  </div>
+  <div class="fig-caption">Figure 2. End-to-End Activity Control Workflow — "Pause Study"</div>
+</div>
+
+<h2>5.x.5 Data Model</h2>
+<p>Each Activity is a record the Activity Manager owns — a data structure internal to this layer, not a kernel object (Figure 3):</p>
+<table>
+<tr><th>Field</th><th>Populated by</th></tr>
+<tr><td><code>activity_id</code></td><td>system-generated at creation; unique lookup key</td></tr>
+<tr><td><code>name</code></td><td>user-supplied, human-visible label (not guaranteed unique)</td></tr>
+<tr><td><code>member_processes[]</code></td><td>Process Grouper, at creation</td></tr>
+<tr><td><code>state</code></td><td>application-level activity state; Activity Control Engine sets it according to the prototype's defined success policy</td></tr>
+<tr><td><code>priority_level</code></td><td>requested/activity-level priority setting; Activity Control Engine, with per-process application results tracked separately where necessary</td></tr>
+<tr><td><code>resource_snapshot</code></td><td>Resource Monitor, recomputed on each poll</td></tr>
+<tr><td><code>event_log[]</code></td><td>maintained by the Timeline Logger, as the activity's application-level history</td></tr>
+</table>
+<p>Activity-level resource figures are never independently measured — memory is read directly from <code>/proc/&lt;pid&gt;/status</code>; CPU utilisation is derived by the Resource Monitor from <code>/proc/&lt;pid&gt;/stat</code> accounting data sampled over an interval. Both are aggregated across <code>member_processes[]</code>.</p>
+<p><code>activity_id</code> is used for lookup rather than <code>name</code>, since two activities could otherwise share a user-chosen name.</p>
+<p><code>priority_level</code> and <code>resource_snapshot</code> are the system's <em>representation</em> of applied/observed state, not a guarantee of authoritative kernel reality — per-process operations can fail (e.g. permission denied) or a process can exit between polls, and such outcomes are recorded rather than assumed.</p>
+
+<div class="figure-block" id="fig3">
+  <div class="fig-frame">
+    <svg class="arch-svg" viewBox="0 0 700 195" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="fig3Arrow" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L8,4 L0,8 Z" fill="var(--ink-dim)"/>
+        </marker>
+      </defs>
+      <!-- root -->
+      <rect class="node-hit" x="270" y="6" width="160" height="26"/>
+      <line class="node-tick proposed" x1="350" y1="8" x2="350" y2="32" stroke-width="4"/>
+      <text x="350" y="24" text-anchor="middle" class="node-label">ACTIVITY</text>
+      <!-- bus -->
+      <line class="arch-line" x1="350" y1="32" x2="350" y2="50"/>
+      <line class="arch-line" x1="120" y1="50" x2="560" y2="50"/>
+      <line class="arch-line" x1="120" y1="50" x2="120" y2="66" marker-end="url(#fig3Arrow)"/>
+      <line class="arch-line" x1="350" y1="50" x2="350" y2="66" marker-end="url(#fig3Arrow)"/>
+      <line class="arch-line" x1="560" y1="50" x2="560" y2="66" marker-end="url(#fig3Arrow)"/>
+      <circle class="arch-joint" cx="350" cy="50" r="2.5"/>
+      <circle class="arch-joint" cx="120" cy="50" r="2.5"/>
+      <circle class="arch-joint" cx="560" cy="50" r="2.5"/>
+      <!-- category labels -->
+      <text x="120" y="80" text-anchor="middle" class="fig-cat-text">identity</text>
+      <text x="350" y="80" text-anchor="middle" class="fig-cat-text">membership</text>
+      <text x="560" y="80" text-anchor="middle" class="fig-cat-text">application state</text>
+      <!-- identity fields -->
+      <line class="node-tick proposed" x1="70" y1="94" x2="70" y2="108"/>
+      <text x="78" y="105" class="fig-field-text">activity_id</text>
+      <line class="node-tick proposed" x1="70" y1="116" x2="70" y2="130"/>
+      <text x="78" y="127" class="fig-field-text">name</text>
+      <!-- membership field -->
+      <line class="node-tick proposed" x1="300" y1="94" x2="300" y2="108"/>
+      <text x="308" y="105" class="fig-field-text">member_processes[]</text>
+      <!-- application state fields -->
+      <line class="node-tick proposed" x1="510" y1="94" x2="510" y2="108"/>
+      <text x="518" y="105" class="fig-field-text">state</text>
+      <line class="node-tick proposed" x1="510" y1="116" x2="510" y2="130"/>
+      <text x="518" y="127" class="fig-field-text">priority_level</text>
+      <line class="node-tick proposed" x1="510" y1="138" x2="510" y2="152"/>
+      <text x="518" y="149" class="fig-field-text">resource_snapshot</text>
+      <line class="node-tick proposed" x1="510" y1="160" x2="510" y2="174"/>
+      <text x="518" y="171" class="fig-field-text">event_log[]</text>
+    </svg>
+  </div>
+  <div class="fig-caption">Figure 3. Activity Data Model — identity, process membership, and application-level state, all owned by the Activity Manager (not the kernel)</div>
+</div>
+
+<h2>5.x.6 Mechanism Provenance</h2>
+<p>The table below (Figure 4) traces every capability the Activity layer offers back to the specific, unmodified Linux mechanism that implements it.</p>
+<table>
+<tr><th>Capability</th><th>Component</th><th>OS mechanism</th><th>Status</th></tr>
+<tr><td>Group processes into an activity</td><td>Process Grouper</td><td>Process table / process listing</td><td>Documented (Review 1)</td></tr>
+<tr><td>Aggregate CPU/memory per activity</td><td>Resource Monitor</td><td>CPU: <code>/proc/&lt;pid&gt;/stat</code> sampled over an interval; memory: <code>/proc/&lt;pid&gt;/status</code>; both aggregated across members</td><td>Documented (Review 1)</td></tr>
+<tr><td>Pause / resume an activity</td><td>Activity Control Engine</td><td><code>kill(pid, SIGSTOP/SIGCONT)</code></td><td>Documented (Review 1)</td></tr>
+<tr><td>Change activity priority</td><td>Activity Control Engine</td><td><code>setpriority()</code> / nice value</td><td>Documented (Review 1)</td></tr>
+<tr><td>Record system actions</td><td>Timeline Logger</td><td>Application-level log, written on Control Engine action</td><td>Documented (Review 1)</td></tr>
+<tr class="unused-row"><td>Finer-grained resource guarantees</td><td>—</td><td>Linux cgroups</td><td><span class="kind-chip unused">NOT USED — OUT OF SCOPE</span></td></tr>
+</table>
+
+<div class="figure-block" id="fig4">
+  <div class="fig-frame">
+    <svg class="arch-svg" viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="fig4Arrow" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L8,4 L0,8 Z" fill="var(--ink-dim)"/>
+        </marker>
+      </defs>
+      <!-- spine -->
+      <line class="arch-line" x1="120" y1="36" x2="120" y2="64" marker-end="url(#fig4Arrow)"/>
+      <line class="arch-line" x1="120" y1="96" x2="120" y2="124" marker-end="url(#fig4Arrow)"/>
+      <line class="arch-line" x1="120" y1="156" x2="120" y2="184" marker-end="url(#fig4Arrow)"/>
+
+      <!-- Capability -->
+      <rect class="node-hit" x="20" y="8" width="200" height="28"/>
+      <line class="node-tick proposed" x1="30" y1="10" x2="30" y2="34" stroke-width="4"/>
+      <text x="42" y="27" class="node-label">Capability</text>
+      <text x="240" y="27" class="fig-eg-text">e.g. "pause the Study activity"</text>
+
+      <!-- Component -->
+      <rect class="node-hit" x="20" y="68" width="200" height="28"/>
+      <line class="node-tick proposed" x1="30" y1="70" x2="30" y2="94" stroke-width="4"/>
+      <text x="42" y="87" class="node-label">ActivityOS Component</text>
+      <text x="240" y="87" class="fig-eg-text">e.g. Activity Control Engine</text>
+
+      <!-- Mechanism -->
+      <rect class="node-hit" x="20" y="128" width="200" height="28"/>
+      <line class="node-tick existing" x1="30" y1="130" x2="30" y2="154"/>
+      <text x="42" y="147" class="node-label">Linux Mechanism</text>
+      <text x="240" y="147" class="fig-eg-text">e.g. kill(pid, SIGSTOP/SIGCONT)</text>
+
+      <!-- Effect -->
+      <rect class="node-hit" x="20" y="188" width="200" height="28"/>
+      <line class="node-tick existing" x1="30" y1="190" x2="30" y2="214"/>
+      <text x="42" y="207" class="node-label">Effect</text>
+      <text x="240" y="207" class="fig-eg-text">e.g. kernel stops scheduling the process</text>
+
+      <!-- cgroups out-of-scope note -->
+      <rect class="arch-zone" x="20" y="230" width="420" height="24"/>
+      <text x="30" y="246" class="zone-label">cgroups — considered, Review 1 §7.2 — not used in this prototype</text>
+    </svg>
+  </div>
+  <div class="fig-caption">Figure 4. Mechanism Provenance — every capability follows this same fixed translation from activity-level request down to kernel-level effect (full capability list in the table above)</div>
+</div>
+
+<h2>5.x.7 Assumptions and Simplifications</h2>
+<ul>
+  <li>Activity membership is assigned manually by the user at creation time; the prototype does not attempt automatic activity detection.</li>
+  <li>The prototype targets a single OS (Linux) and a single set of primitives (process listing, <code>/proc</code>, POSIX signals, <code>setpriority()</code>), consistent with the scope defined in Review 1 §1.3 and §7.5.</li>
+  <li>The Timeline Logger records only actions initiated by the Activity Control Engine; it does not observe the kernel, and the kernel is never queried for activity-related information.</li>
+  <li>cgroups are acknowledged as a complementary, lower-level enforcement mechanism but are not used in this prototype.</li>
+  <li>A member process may exit between when it was grouped into an activity and when a later monitoring or control operation is attempted on it.</li>
+  <li>Control operations may fail for individual member processes (e.g. insufficient permissions, PID no longer present); such outcomes are recorded rather than assumed to have succeeded.</li>
+  <li>Activity-level state (<code>state</code>, <code>priority_level</code>, <code>resource_snapshot</code>) represents the application layer's own record of intended and observed status, not an OS- or kernel-level notion of "activity" — the kernel has no such concept.</li>
+</ul>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- INTERACTIVE EXPLORER (screen only)                            -->
+<!-- ============================================================ -->
+<section id="explorer" class="screen-only">
+  <div class="note-box">The following interactive explorer is the visual companion to the formal methodology above. It presents the same architecture, workflows, data model and mechanism provenance interactively.</div>
+
+  <header class="explorer-head">
+    <h2>Interactive Methodology Explorer</h2>
+    <div class="sub">Select any component or step in the diagram. Its technical justification — why it exists, what it needs, where its capability comes from, what it produces — appears alongside it.</div>
+    <div class="legend">
+      <div class="legend-item"><span class="tick" style="background:var(--proposed);"></span> proposed / new</div>
+      <div class="legend-item"><span class="tick" style="background:var(--existing);"></span> existing OS — unmodified</div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="active" data-tab="arch">Architecture</button>
+    <button data-tab="flow">Workflows</button>
+    <button data-tab="data">Data Model</button>
+    <button data-tab="map">Mechanism Map</button>
+  </nav>
+
+  <div class="op-list" id="opList"></div>
+
+  <div class="stage">
+    <div class="diagram-pane">
+      <div class="pane-caption" id="paneCaption">system architecture — click a component</div>
+      <div id="diagram"></div>
+    </div>
+    <div class="annotation-pane" id="annotation">
+      <div class="placeholder">Select a component to read its justification.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ---------- CONTENT ---------- */
+
+const archNodes = [
+  {id:'user', label:'User', kind:'proposed',
+   detail:{why:'The user reasons and issues commands in activity terms — "pause Study" — not process terms. This is exactly the gap Review 1 identifies: activities are not first-class in the OS model, so the user normally has to translate manually.',
+   mech:'None. This is a human decision, not a system call — nothing to invoke yet.',
+   data:'Activity name + requested action, entered once.',
+   result:'A request enters the activity layer instead of being manually broken into per-process actions.'}},
+  {id:'grouper', label:'Process Grouper', kind:'proposed', sub:'maps processes → activity',
+   detail:{why:'Someone has to establish the activity↔process link in the first place — nothing later in the chain can do this, because the OS has no notion of "activity" to consult.',
+   mech:'Existing OS process table / process listing interface. Read-only; no kernel change needed.',
+   data:'In: user-selected PIDs. Out: a validated PID set.',
+   result:'The PID set is handed to the Activity Manager, to be stored under the new activity\'s <code>activity_id</code>.'}},
+  {id:'manager', label:'Activity Manager', kind:'proposed', sub:'owns identity + membership + lifecycle',
+   detail:{why:'Single owner of the activity↔process mapping. The Resource Monitor and Activity Control Engine both read from this record independently — they operate on this maintained membership rather than rediscovering it themselves.',
+   mech:'Internal application data structure. No OS mechanism at this stage — pure bookkeeping.',
+   data:'Holds: <code>activity_id</code>, <code>name</code>, <code>member_processes[]</code>, <code>state</code>.',
+   result:'Resource Monitor and Control Engine each receive a resolved PID set on demand, keyed by <code>activity_id</code>.'}},
+  {id:'monitor', label:'Resource Monitor', kind:'proposed', sub:'aggregates CPU / memory',
+   detail:{why:'Activity-level resource use is not stored anywhere by the OS; it must be computed fresh from process-level data every time it is requested. It reads the Activity Manager\'s membership directly, in parallel with the Control Engine.',
+   mech:'CPU: samples process CPU accounting information from <code>/proc/&lt;pid&gt;/stat</code> over an observation interval and computes per-process utilisation from it. Memory: read directly from <code>/proc/&lt;pid&gt;/status</code>. Both are Linux <code>/proc</code> process information, aggregated across the member set.',
+   data:'In: PID set. Out: one aggregated CPU% + memory figure.',
+   result:'Activity record\'s <code>resource_snapshot</code> updates; feeds the Dashboard directly.'}},
+  {id:'control', label:'Activity Control Engine', kind:'proposed', sub:'pause / resume / priority',
+   detail:{why:'This is the central implementation mechanism through which the proposed activity abstraction is connected to existing process-level OS controls — translating one activity-level command into many process-level operations. It is not claimed as a novel scheduling technique; the novelty is the abstraction, not this translation.',
+   mech:'<code>kill(pid, SIGSTOP/SIGCONT)</code> for pause/resume; <code>setpriority()</code> for priority change.',
+   data:'In: PID set + requested operation. Out: one syscall attempt per member PID.',
+   result:'Reaches the kernel through OS System Calls; also branches to the Timeline Logger to record the decision.'}},
+  {id:'syscalls', label:'OS System Calls', kind:'existing', sub:'setpriority(), kill(), /proc',
+   detail:{why:'Named explicitly, as its own layer, to make clear the Control Engine never bypasses normal system calls — it has no special kernel access the project introduces.',
+   mech:'Standard POSIX / Linux system calls — unmodified, usable by any ordinary process.',
+   data:'Syscall arguments: pid, signal or priority value.',
+   result:'The request reaches the kernel through the exact same path any program would use.'}},
+  {id:'kernel', label:'Operating System', kind:'existing', sub:'kernel scheduler, process table — untouched',
+   detail:{why:'This is the existing system the project deliberately does not modify — and it is a deliberate dead end in the diagram: the kernel has no channel back to the activity layer.',
+   mech:'Standard, unmodified kernel scheduler and process table.',
+   data:'Receives a standard system call, nothing activity-specific.',
+   result:'Process state changes (stopped, resumed, reweighted) where the call succeeds. The kernel never learns what "Study" is, and never reports back — which is exactly why the Timeline Logger exists as a separate path.'}},
+  {id:'timeline', label:'Timeline Logger', kind:'proposed', sub:'records Control Engine actions only',
+   detail:{why:'Makes Control Engine decisions auditable — directly addresses the "opacity of background task behaviour" problem named in Review 1\'s motivation. It branches off the Control Engine, not the kernel, because the kernel has nothing to report.',
+   mech:'Application-level log, written by the Control Engine itself at the moment it attempts an action.',
+   data:'<code>{ activity, action, timestamp }</code> — appended to that activity\'s <code>event_log[]</code>.',
+   result:'Feeds the Dashboard\'s timeline view.'}},
+  {id:'dashboard', label:'Dashboard', kind:'proposed', sub:'activity-grouped view + timeline',
+   detail:{why:'The single interaction surface where the fragmentation problem from Review 1 (four unrelated process entries) is actually resolved for the user. It draws from two independent sources — Resource Monitor and Timeline Logger — not from the kernel.',
+   mech:'Reads Activity Manager, Resource Monitor and Timeline Logger records. No OS interaction of its own.',
+   data:'In: aggregated Activity records. Out: grouped view + timeline.',
+   result:'User sees one "Study" activity, not four disconnected processes.'}},
+];
+
+const workflows = {
+  create:{label:'Create Activity', steps:[
+    {id:'in', label:'User Input', kind:'proposed', detail:{why:'User names a new activity (e.g. "Study Session") and selects the currently running processes that belong to it.',
+      mech:'None yet — this is the one workflow with manual input at the membership level, a deliberate scope decision (Review 1, §7.1): automatic detection is a separate, unsolved problem.',
+      data:'Activity name + selected PIDs.', result:'Request passed to Process Grouper.'}},
+    {id:'grp', label:'Process Grouper', kind:'proposed', detail:{why:'Validates that the selected processes actually exist before they are trusted as an activity\'s membership.',
+      mech:'Process table lookup per selected PID.', data:'In: candidate PIDs. Out: validated PID set.', result:'Handed to Activity Manager.'}},
+    {id:'mgr', label:'Activity Manager', kind:'proposed', detail:{why:'Creates the persistent record this activity will be referenced by for every later operation.',
+      mech:'Internal bookkeeping — no OS call.', data:'New record: <code>activity_id</code>, <code>name</code>, <code>member_processes[]</code>, <code>state</code> = active.', result:'"Study" now exists as an addressable activity, keyed by <code>activity_id</code>.'}},
+  ]},
+  monitor:{label:'Monitor Resources', steps:[
+    {id:'trig', label:'Trigger', kind:'proposed', detail:{why:'Runs continuously or on demand — no state-changing signal is ever sent during this workflow.',
+      mech:'Dashboard open, or scheduled refresh.', data:'—', result:'Resource Monitor invoked for each active activity.'}},
+    {id:'read', label:'Resource Monitor', kind:'proposed', detail:{why:'Activity-level figures don\'t exist anywhere until computed — this step computes them.',
+      mech:'CPU: <code>/proc/&lt;pid&gt;/stat</code> sampled over an interval, converted to utilisation. Memory: <code>/proc/&lt;pid&gt;/status</code>, read directly.', data:'In: member_processes[]. Out: per-process CPU/mem.', result:'Values are aggregated into one figure per activity.'}},
+    {id:'exp', label:'Expose', kind:'proposed', detail:{why:'The point of aggregation is to give the user one number instead of several.',
+      mech:'None — write to Activity record.', data:'<code>resource_snapshot</code> updated.', result:'Dashboard shows one CPU%/memory value per activity.'}},
+  ]},
+  pause:{label:'Pause "Study" — end to end', steps:[
+    {id:'intent', label:'Human Intent', kind:'proposed', detail:{why:'User clicks Pause on the "Study" activity — the command is issued at the activity level, exactly as Review 1 argues users naturally think.',
+      mech:'None yet.', data:'Activity <code>activity_id</code> for "Study".', result:'Request enters Activity Manager.'}},
+    {id:'lookup', label:'Activity Layer', kind:'proposed', detail:{why:'The system needs to know which record "Study" refers to before anything else can happen.',
+      mech:'Record lookup by <code>activity_id</code> — not by the user-visible name, which is not guaranteed unique.', data:'In: activity_id. Out: matching Activity record.', result:'Record located.'}},
+    {id:'resolve', label:'Membership Resolution', kind:'proposed', detail:{why:'The stored <code>member_processes[]</code> mapping is the source of membership for this operation — built earlier by the Process Grouper.',
+      mech:'Read member_processes[] off the record; the Control Engine may validate that each stored PID is still available, since a member process can exit between grouping and control time.', data:'PID set for "Study".', result:'Handed to Control Engine.'}},
+    {id:'ctrl', label:'Control Component', kind:'proposed', detail:{why:'A single activity-level request must fan out into one action per process.',
+      mech:'Activity Control Engine receives PID set + "pause".', data:'PID set + operation.', result:'Per-process operations are queued.'}},
+    {id:'mech', label:'Linux Mechanism', kind:'existing', detail:{why:'Pausing a process is not invented by this project — it reuses the exact mechanism any program can use on itself or a child.',
+      mech:'<code>kill(pid, SIGSTOP)</code> attempted once per member PID; the outcome of each attempt is recorded.', data:'One syscall attempt per PID.', result:'Signal delivered where the process still exists and permission allows it; failures are recorded rather than assumed successful.'}},
+    {id:'kern', label:'Kernel Effect', kind:'existing', detail:{why:'Confirms the claim at the heart of the project: the kernel is never modified and never told what "Study" is.',
+      mech:'Standard, unmodified signal handling in the scheduler.', data:'—', result:'Each successfully-signaled process stops being scheduled.'}},
+    {id:'log', label:'Side Effect', kind:'proposed', detail:{why:'Makes the decision auditable — logged because the Control Engine acted, not because the kernel reported anything.',
+      mech:'Timeline Logger writes an entry at the moment the Control Engine attempts kill().', data:'<code>{activity:"Study", action:"pause", time}</code>', result:'Entry appended to event_log[] on the Activity record.'}},
+    {id:'result', label:'Result', kind:'proposed', detail:{why:'Closes the loop back to what the user asked for, without overstating certainty about every member process.',
+      mech:'—', data:'Activity record state updated, per the prototype\'s defined success policy.', result:'Dashboard reflects this application-level state. Resume follows the identical path with SIGCONT.'}},
+  ]},
+  priority:{label:'Change Priority', steps:[
+    {id:'in', label:'User Input', kind:'proposed', detail:{why:'User sets "Gaming" activity priority to high.', mech:'None yet.', data:'Activity_id + requested nice value.', result:'Passed to Activity Manager.'}},
+    {id:'resolve', label:'Membership Resolution', kind:'proposed', detail:{why:'Same pattern as pause/resume — priority must be applied per process, so membership must be resolved first.',
+      mech:'Read member_processes[] off the "Gaming" record.', data:'PID set.', result:'Handed to Control Engine.'}},
+    {id:'mech', label:'Linux Mechanism', kind:'existing', detail:{why:'No new scheduling concept is introduced — the existing per-process priority mechanism is reused, once per member.',
+      mech:'<code>setpriority()</code> attempted once per member PID.', data:'PID + nice value, per process.', result:'Kernel scheduler reweights each successfully-updated process.'}},
+    {id:'result', label:'Result', kind:'proposed', detail:{why:'No process state transition occurs here — processes keep running, just reweighted. Per-process calls can still fail independently.',
+      mech:'Timeline Logger records the change and any per-process failures.', data:'<code>priority_level</code> updated to reflect the requested setting.', result:'Dashboard reflects the priority the system attempted to apply — its own representation, not a guarantee of uniform kernel state.'}},
+  ]},
+};
+
+const dataFields = [
+  {id:'activity_id', label:'activity_id', kind:'proposed', sub:'system-generated',
+   detail:{why:'Every operation needs a lookup key that is guaranteed unique — the user-visible name is not, since two activities could otherwise both be called "Study."',
+   mech:'—', data:'Generated once, at creation.', result:'Used as the lookup key for every later operation.'}},
+  {id:'name', label:'name', kind:'proposed', sub:'user-visible label',
+   detail:{why:'The user still needs a recognizable label ("Study") — this is what the Dashboard displays, kept separate from the internal lookup key.',
+   mech:'—', data:'Set once, at creation, by user input. Not guaranteed unique.', result:'Displayed on the Dashboard; never used as a lookup key.'}},
+  {id:'members', label:'member_processes[]', kind:'proposed', sub:'set of PIDs',
+   detail:{why:'The actual bridge between the activity abstraction and process reality — everything downstream operates on this set, never on the name or id directly.',
+   mech:'Populated by Process Grouper from the OS process table.', data:'Read by Resource Monitor and Control Engine on every operation.', result:'Determines exactly which processes are affected by any activity-level command.'}},
+  {id:'state', label:'state', kind:'proposed', sub:'application-level activity state',
+   detail:{why:'The user needs to know at a glance whether an activity is currently running or paused, without checking each process.',
+   mech:'Set by Activity Control Engine according to the prototype\'s defined success policy — not a raw report of kernel state.', data:'Reflects the outcome of the last pause/resume attempt across member processes.', result:'Drives what the Dashboard displays and which actions are offered next.'}},
+  {id:'priority', label:'priority_level', kind:'proposed', sub:'requested / activity-level setting',
+   detail:{why:'Gives the user one priority value to look at without re-querying every process, without claiming that value is authoritative kernel state.',
+   mech:'Updated by Activity Control Engine after setpriority() is attempted per member PID; per-process results tracked separately where they diverge.',
+   data:'Represents the requested/intended setting for the activity.', result:'Provides an activity-level representation of the priority the system attempted to apply — not a guarantee every member process reached it.'}},
+  {id:'resource', label:'resource_snapshot', kind:'proposed', sub:'CPU% + memory',
+   detail:{why:'Without this field, the Dashboard would have to re-read /proc for every render — this caches the last aggregation.',
+   mech:'Recomputed by Resource Monitor from /proc reads on each poll.', data:'Sum of member processes\' CPU and memory figures.', result:'What the Dashboard actually displays as "activity resource usage."'}},
+  {id:'events', label:'event_log[]', kind:'proposed', sub:'maintained by Timeline Logger',
+   detail:{why:'Directly answers Review 1\'s transparency objective — the user can see what the system did and when, not just its current state.',
+   mech:'This is where the Timeline Logger writes: the logger is the component, event_log[] is the field it appends to — one history, not two mechanisms.', data:'{action, timestamp, outcome} entries, appended whenever the Control Engine acts.', result:'Rendered as the Dashboard\'s timeline view.'}},
+];
+
+const mapItems = [
+  {id:'group', label:'Group processes into an activity', kind:'proposed', sub:'Process Grouper',
+   detail:{why:'Establishes the one link nothing else in the system can derive on its own.', mech:'Process table / process listing (read-only).', data:'user-selected PIDs → validated PID set.', result:'Stored as member_processes[] on the Activity record.', status:'doc'}},
+  {id:'agg', label:'Aggregate resource usage', kind:'proposed', sub:'Resource Monitor',
+   detail:{why:'No OS facility reports "per-activity" usage — it has to be computed here.', mech:'CPU: /proc/&lt;pid&gt;/stat sampled over an interval, converted to utilisation. Memory: /proc/&lt;pid&gt;/status, read directly. Both are Linux /proc process information, aggregated across members.', data:'PID set → CPU%/memory figure.', result:'resource_snapshot on the Activity record.', status:'doc'}},
+  {id:'pauseres', label:'Pause / resume an activity', kind:'proposed', sub:'Activity Control Engine',
+   detail:{why:'Turns one user command into the right number of process-level signal attempts.', mech:'kill(pid, SIGSTOP) / SIGCONT, attempted once per member PID; outcome recorded per PID.', data:'PID set + operation → one syscall attempt per PID.', result:'Kernel stops/resumes scheduling each successfully-signaled process; failures are recorded, not assumed away.', status:'doc'}},
+  {id:'prio', label:'Change activity priority', kind:'proposed', sub:'Activity Control Engine',
+   detail:{why:'Same translation pattern as pause/resume, different mechanism.', mech:'setpriority() / nice, attempted once per member PID.', data:'PID set + nice value → one syscall attempt per PID.', result:'Kernel scheduler reweights each successfully-updated process; the record reflects the requested setting, not a guaranteed uniform state.', status:'doc'}},
+  {id:'log', label:'Record what the system did', kind:'proposed', sub:'Timeline Logger',
+   detail:{why:'Addresses the transparency gap named in Review 1\'s motivation.', mech:'Application-level log, written when Control Engine acts.', data:'{activity, action, time} → appended entry.', result:'Feeds Dashboard timeline.', status:'doc'}},
+  {id:'cgroups', label:'Finer-grained resource guarantees', kind:'existing', sub:'not used',
+   detail:{why:'Considered in Review 1 §7.2 as a complementary, lower-level enforcement mechanism — kept here only so the prototype\'s boundary is explicit, not because it is used.', mech:'Linux cgroups.', data:'—', result:'Out of scope for this prototype.', status:'unused'}},
+];
+
+/* ---------- ARCHITECTURE DIAGRAM (SVG) ---------- */
+
+function archSVG(){
+  return `
+  <svg class="arch-svg" viewBox="0 0 760 500" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="archArrow" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0,0 L8,4 L0,8 Z" fill="var(--ink-dim)"/>
+      </marker>
+    </defs>
+
+    <line class="arch-line" x1="340" y1="34" x2="340" y2="62" marker-end="url(#archArrow)"/>
+    <line class="arch-line" x1="340" y1="90" x2="340" y2="122" marker-end="url(#archArrow)"/>
+
+    <line class="arch-line" x1="340" y1="150" x2="340" y2="168"/>
+    <line class="arch-line" x1="112" y1="168" x2="650" y2="168"/>
+    <line class="arch-line" x1="112" y1="168" x2="112" y2="202" marker-end="url(#archArrow)"/>
+    <line class="arch-line" x1="340" y1="168" x2="340" y2="202" marker-end="url(#archArrow)"/>
+    <line class="arch-line" x1="650" y1="168" x2="650" y2="202" marker-end="url(#archArrow)"/>
+    <circle class="arch-joint" cx="340" cy="168" r="2.5"/>
+    <circle class="arch-joint" cx="112" cy="168" r="2.5"/>
+    <circle class="arch-joint" cx="650" cy="168" r="2.5"/>
+
+    <line class="arch-line" x1="340" y1="230" x2="340" y2="258" marker-end="url(#archArrow)"/>
+    <line class="arch-line" x1="340" y1="290" x2="340" y2="318" marker-end="url(#archArrow)"/>
+
+    <rect class="arch-zone" x="248" y="244" width="184" height="106"/>
+    <text x="256" y="257" class="zone-label">below the boundary — unmodified Linux</text>
+    <text x="248" y="366" class="deadend-label">no return path — the kernel never reports back</text>
+
+    <path class="arch-line" d="M112,230 V460 H333" marker-end="url(#archArrow)"/>
+    <path class="arch-line" d="M650,230 V460 H347" marker-end="url(#archArrow)"/>
+
+    <g class="arch-node" data-id="user">
+      <rect class="node-hit" x="300" y="6" width="160" height="28"/>
+      <line class="node-tick proposed" x1="340" y1="8" x2="340" y2="26"/>
+      <text x="352" y="24" class="node-label">User</text>
+    </g>
+
+    <g class="arch-node" data-id="grouper">
+      <rect class="node-hit" x="300" y="62" width="230" height="30"/>
+      <line class="node-tick proposed" x1="340" y1="64" x2="340" y2="90"/>
+      <text x="352" y="80" class="node-label">Process Grouper</text>
+      <text x="352" y="92" class="node-sub">maps processes → activity</text>
+    </g>
+
+    <g class="arch-node" data-id="manager">
+      <rect class="node-hit" x="300" y="122" width="260" height="30"/>
+      <line class="node-tick proposed" x1="340" y1="123" x2="340" y2="151" stroke-width="4"/>
+      <text x="352" y="140" class="node-label">Activity Manager</text>
+      <text x="352" y="152" class="node-sub">owns activity_id, membership, lifecycle</text>
+    </g>
+
+    <g class="arch-node" data-id="monitor">
+      <rect class="node-hit" x="100" y="202" width="150" height="30"/>
+      <line class="node-tick proposed" x1="112" y1="204" x2="112" y2="230"/>
+      <text x="124" y="218" class="node-label">Resource Monitor</text>
+      <text x="124" y="230" class="node-sub">aggregates CPU / memory</text>
+    </g>
+
+    <g class="arch-node" data-id="control">
+      <rect class="node-hit" x="270" y="202" width="230" height="30"/>
+      <line class="node-tick proposed" x1="340" y1="204" x2="340" y2="230"/>
+      <text x="352" y="218" class="node-label">Activity Control Engine</text>
+      <text x="352" y="230" class="node-sub">pause / resume / priority</text>
+    </g>
+
+    <g class="arch-node" data-id="timeline">
+      <rect class="node-hit" x="510" y="202" width="150" height="30"/>
+      <line class="node-tick proposed" x1="650" y1="204" x2="650" y2="230"/>
+      <text x="638" y="218" text-anchor="end" class="node-label">Timeline Logger</text>
+      <text x="638" y="230" text-anchor="end" class="node-sub">records Control Engine actions only</text>
+    </g>
+
+    <g class="arch-node" data-id="syscalls">
+      <rect class="node-hit" x="270" y="258" width="160" height="30"/>
+      <line class="node-tick existing" x1="340" y1="260" x2="340" y2="286"/>
+      <text x="352" y="274" class="node-label">OS System Calls</text>
+      <text x="352" y="286" class="node-sub">setpriority(), kill(), /proc</text>
+    </g>
+
+    <g class="arch-node" data-id="kernel">
+      <rect class="node-hit" x="270" y="318" width="160" height="30"/>
+      <line class="node-tick existing" x1="340" y1="320" x2="340" y2="346"/>
+      <text x="352" y="334" class="node-label">Operating System</text>
+      <text x="352" y="346" class="node-sub">kernel scheduler — untouched</text>
+    </g>
+
+    <g class="arch-node" data-id="dashboard">
+      <rect class="node-hit" x="270" y="446" width="220" height="30"/>
+      <line class="node-tick proposed" x1="340" y1="448" x2="340" y2="474" stroke-width="4"/>
+      <text x="352" y="462" class="node-label">Dashboard</text>
+      <text x="352" y="474" class="node-sub">reads Monitor + Timeline — never the kernel</text>
+    </g>
+  </svg>`;
+}
+
+/* ---------- RENDER ---------- */
+
+const diagram = document.getElementById('diagram');
+const annotation = document.getElementById('annotation');
+const paneCaption = document.getElementById('paneCaption');
+const opList = document.getElementById('opList');
+let currentTab = 'arch';
+let currentOp = 'create';
+
+function renderAnnotation(item){
+  const d = item.detail;
+  const kindLabel = item.kind === 'proposed' ? 'proposed / new' : 'existing — unmodified';
+  let html = `<div class="a-title">${item.label}</div><div class="a-kind">${kindLabel}${item.sub?' · '+item.sub:''}</div><div class="a-body">`;
+  if(d.why) html += `<p><em>Why —</em> ${d.why}</p>`;
+  if(d.mech) html += `<p><em>Mechanism —</em> ${d.mech}</p>`;
+  if(d.data) html += `<p><em>Data —</em> ${d.data}</p>`;
+  if(d.result) html += `<p><em>Result —</em> ${d.result}</p>`;
+  html += `</div>`;
+  if(item.status){
+    const cls = item.status==='doc'?'':'unused';
+    const txt = item.status==='doc'?'documented — Review 1':'not used in this prototype';
+    html += `<span class="a-status ${cls}">${txt}</span>`;
+  }
+  annotation.innerHTML = html;
+}
+
+function clearSelection(root){
+  root.querySelectorAll('.selected').forEach(el=>el.classList.remove('selected'));
+  root.querySelectorAll('.node-label.selected').forEach(el=>el.classList.remove('selected'));
+}
+
+function renderArch(){
+  paneCaption.textContent = 'system architecture — click a component';
+  opList.classList.remove('show');
+  diagram.innerHTML = archSVG();
+  diagram.querySelectorAll('.arch-node').forEach(g=>{
+    g.addEventListener('click', ()=>{
+      diagram.querySelectorAll('.node-label').forEach(l=>l.classList.remove('selected'));
+      g.querySelector('.node-label').classList.add('selected');
+      const item = archNodes.find(n=>n.id===g.dataset.id);
+      renderAnnotation(item);
+    });
+  });
+  annotation.innerHTML = '<div class="placeholder">Select a component to read its justification.</div>';
+}
+
+function renderFlow(opId){
+  currentOp = opId;
+  paneCaption.textContent = 'operation trace — click a step';
+  opList.classList.add('show');
+  opList.innerHTML = '';
+  Object.keys(workflows).forEach(k=>{
+    const s = document.createElement('span');
+    s.className = k===opId ? 'active' : '';
+    s.textContent = workflows[k].label;
+    s.onclick = ()=>renderFlow(k);
+    opList.appendChild(s);
+  });
+  const steps = workflows[opId].steps;
+  diagram.innerHTML = `<div class="step-timeline"><div class="step-rule"></div></div>`;
+  const timeline = diagram.querySelector('.step-timeline');
+  steps.forEach(s=>{
+    const item = document.createElement('div');
+    item.className = 'step-item' + (s.kind==='proposed' ? ' proposed' : '');
+    item.dataset.id = s.id;
+    item.innerHTML = `<div class="step-dot"></div><div class="step-name">${s.label}</div>`;
+    item.onclick = ()=>{
+      timeline.querySelectorAll('.step-item').forEach(x=>x.classList.remove('selected'));
+      item.classList.add('selected');
+      renderAnnotation(s);
+    };
+    timeline.appendChild(item);
+  });
+  annotation.innerHTML = '<div class="placeholder">Select a step to read what happens, the mechanism used, and the result.</div>';
+}
+
+function renderList(items, caption){
+  paneCaption.textContent = caption;
+  opList.classList.remove('show');
+  diagram.innerHTML = '<ul class="field-list"></ul>';
+  const ul = diagram.querySelector('.field-list');
+  items.forEach(it=>{
+    const li = document.createElement('li');
+    li.dataset.id = it.id;
+    li.innerHTML = `<span class="f-name">${it.label}</span><span class="f-sub">${it.sub||''}</span>`;
+    li.onclick = ()=>{
+      ul.querySelectorAll('li').forEach(x=>{x.classList.remove('selected'); x.querySelector('.f-name').classList.remove('selected');});
+      li.classList.add('selected');
+      li.querySelector('.f-name').classList.add('selected');
+      renderAnnotation(it);
+    };
+    ul.appendChild(li);
+  });
+  annotation.innerHTML = '<div class="placeholder">Select an item to read its justification.</div>';
+}
+
+const renderers = {
+  arch: renderArch,
+  flow: ()=>renderFlow(currentOp),
+  data: ()=>renderList(dataFields, 'activity record — click a field'),
+  map: ()=>renderList(mapItems, 'capabilities — click one to trace its provenance'),
+};
+
+document.querySelectorAll('nav.tabs button').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    currentTab = t.dataset.tab;
+    renderers[currentTab]();
+  };
+});
+
+renderArch();
+</script>
+</body>
+</html>
